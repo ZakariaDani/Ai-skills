@@ -18,7 +18,7 @@ This repository contains reusable, modular skills that can be integrated into yo
 AI-Skills/
 ├── README.md
 └── skills/
-    └── database-sql-designer/
+    └── database-designer/
         ├── README.md
         ├── prompt.md
         ├── .cursorrules
@@ -27,13 +27,13 @@ AI-Skills/
 
 ## 🛠️ Available Skills
 
-### 1. Database SQL Designer
-**Path:** `skills/database-sql-designer/`
+### 1. Database  Designer
+**Path:** `skills/database-designer/`
 
-Generate normalized, production-ready SQL database schemas from natural language specifications.
+Generate normalized, production-ready  database schemas from natural language specifications.
 
 **Features:**
-- Supports PostgreSQL, MySQL, SQLite, SQL Server
+- Supports Postgre, My, ite,  Server
 - Automatic normalization (3NF by default)
 - Index recommendations
 - Foreign key constraints
@@ -46,7 +46,7 @@ Generate normalized, production-ready SQL database schemas from natural language
 - Learning database design patterns
 - Documenting existing database structures
 
-[View Full Documentation →](skills/database-sql-designer/README.md)
+[View Full Documentation →](skills/database-designer/README.md)
 
 ---
 
