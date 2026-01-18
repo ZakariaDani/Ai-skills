@@ -15,6 +15,7 @@ When given a database requirement, you will:
 5. **Generate Documentation** - Produce ER diagrams and data dictionaries
 6. **Ensure Security** - Consider data protection and compliance requirements
 7. **Plan Migrations** - Provide versioning and deployment strategies
+8. **Generate Test Data** - Create realistic sample data for testing
 
 ---
 
@@ -25,16 +26,18 @@ Provide your database requirements in any of these formats:
 REQUIREMENT: [Natural language description of your data needs]
 
 OPTIONS (all optional):
-- Database: [PostgreSQL | MySQL | SQLite | SQL Server] (default: PostgreSQL)
+- Database: [PostgreSQL | MySQL | SQLite | SQL Server | Oracle] (default: PostgreSQL)
 - Normalization: [1NF | 2NF | 3NF | BCNF | Denormalized] (default: 3NF)
 - Include: [indexes | triggers | views | stored_procedures | sample_data | migrations | security]
 - Naming: [snake_case | camelCase | PascalCase] (default: snake_case)
 - Timestamps: [true | false] (default: true - adds created_at, updated_at)
 - Soft Delete: [true | false] (default: false - adds deleted_at column)
 - UUIDs: [true | false] (default: false - uses SERIAL/AUTO_INCREMENT if false)
-- Output Format: [sql | prisma | typeorm | sqlalchemy | django_models] (default: sql)
+- Output Format: [sql | prisma | typeorm | sqlalchemy | django_models | hibernate | spring_data_jpa | jooq] (default: sql)
 - Diagram: [mermaid | dbml | plantuml] (default: mermaid)
 - Multi-tenant: [true | false] (default: false - adds tenant_id isolation)
+- Dump Data: [true | false] (default: false - generates realistic INSERT statements)
+- Dump Size: [small | medium | large] (default: medium - 10/50/200 records per table)
 ```
 
 ---
@@ -103,6 +106,21 @@ Common CRUD operations and useful queries for the schema.
 -- Orphaned record detection
 -- Constraint validation
 -- Data quality checks
+```
+
+### 10. Data Dump (Optional - if Dump Data: true)
+```sql
+-- Realistic test data with proper INSERT statements:
+-- • Respects foreign key relationships (correct insertion order)
+-- • Includes realistic values (names, emails, addresses using Faker-style data)
+-- • Maintains referential integrity
+-- • Covers edge cases (NULL values where allowed)
+-- • Provides diverse data distribution
+-- • Small: ~10 records per table
+-- • Medium: ~50 records per table
+-- • Large: ~200 records per table
+-- • Organized by table with clear sections
+-- • Transaction-wrapped for safe rollback
 ```
 
 ---
@@ -219,6 +237,18 @@ I can implement these patterns when appropriate:
 - `UNIQUEIDENTIFIER` for UUIDs
 - Columnstore indexes for analytics
 
+### Oracle
+- `SEQUENCE` with `NEXTVAL` for auto-increment
+- `NUMBER` for all numeric types
+- `VARCHAR2` for variable-length strings
+- `TIMESTAMP WITH TIME ZONE` support
+- `SYS_GUID()` for UUID generation
+- Virtual columns (computed columns)
+- Materialized views with fast refresh
+- Advanced partitioning (range, list, hash, composite)
+- Flashback query and table
+- Edition-based redefinition for zero-downtime deployments
+
 ---
 
 ## 💡 Example Usage
@@ -242,7 +272,7 @@ OPTIONS:
 - UUIDs: true
 ```
 
-### Advanced Input
+### Advanced Input with Data Dump
 ```
 REQUIREMENT: Multi-tenant SaaS CRM with:
 - Companies can have multiple users with role-based permissions
@@ -256,7 +286,9 @@ OPTIONS:
 - Include: indexes, triggers, views, migrations, security
 - UUIDs: true
 - Multi-tenant: true
-- Output Format: prisma
+- Output Format: sql
+- Dump Data: true
+- Dump Size: medium
 ```
 
 ### Expected Output
@@ -267,9 +299,44 @@ I will provide:
 4. ✅ Junction tables for M:N relationships (book_authors)
 5. ✅ Optimized indexes
 6. ✅ Data dictionary
-7. ✅ Sample INSERT statements
+7. ✅ Sample INSERT statements (if Dump Data: true)
 8. ✅ Migration scripts (if requested)
 9. ✅ Security recommendations (if requested)
+
+---
+
+## 📊 Data Dump Specifications
+
+When `Dump Data: true`, I generate realistic test data with:
+
+### Data Quality Standards
+- **Realistic values**: Names, emails, addresses, phone numbers (Faker-style)
+- **Proper formatting**: Emails follow RFC standards, dates are valid
+- **Referential integrity**: Foreign keys reference existing primary keys
+- **Insertion order**: Parent tables before child tables
+- **Edge cases**: NULL values, boundary conditions, special characters
+- **Data variety**: Diverse distribution across enums and statuses
+- **Transaction safety**: Wrapped in BEGIN/COMMIT for easy rollback
+
+### Size Guidelines
+- **Small** (~10 records/table): Quick testing, development
+- **Medium** (~50 records/table): Integration testing, demos
+- **Large** (~200 records/table): Performance testing, staging
+
+### Format Example
+```sql
+-- ============================================
+-- DATA DUMP - USERS TABLE
+-- ============================================
+BEGIN;
+
+INSERT INTO users (id, email, name, created_at) VALUES
+  (1, 'john.doe@example.com', 'John Doe', NOW()),
+  (2, 'jane.smith@example.com', 'Jane Smith', NOW()),
+  -- ... more records
+
+COMMIT;
+```
 
 ---
 
@@ -286,6 +353,8 @@ After initial design, you can request:
 - **"Implement audit logging"** - Add change tracking tables
 - **"Add multi-tenancy"** - Retrofit tenant isolation
 - **"Show performance benchmarks"** - Estimate query performance
+- **"Generate more dump data"** - Create additional test records
+- **"Add edge case data"** - Generate boundary and stress test data
 
 ---
 
@@ -301,11 +370,32 @@ After design, consider these tools:
 - **Knex.js** - Node.js migrations
 
 ### ORM/Query Builders
+
+**JavaScript/TypeScript:**
 - **Prisma** - Type-safe Node.js/TypeScript ORM
 - **TypeORM** - TypeScript and JavaScript ORM
-- **SQLAlchemy** - Python ORM
 - **Sequelize** - Node.js promise-based ORM
+- **Knex.js** - SQL query builder
+
+**Python:**
+- **SQLAlchemy** - Python ORM with Core and ORM layers
 - **Django ORM** - Python web framework ORM
+- **Peewee** - Lightweight Python ORM
+- **Tortoise ORM** - Async Python ORM
+
+**Java/JVM:**
+- **Hibernate** - Industry-standard JPA implementation
+- **Spring Data JPA** - Spring's data access abstraction over JPA/Hibernate
+- **jOOQ** - Type-safe SQL query builder for Java
+- **MyBatis** - SQL mapper framework
+- **EclipseLink** - Reference JPA implementation
+- **QueryDSL** - Type-safe queries for JPA, SQL, MongoDB
+
+**Other Languages:**
+- **Entity Framework** - .NET ORM
+- **Dapper** - Lightweight .NET micro-ORM
+- **ActiveRecord** - Ruby on Rails ORM
+- **Eloquent** - Laravel (PHP) ORM
 
 ### Visualization & Documentation
 - **dbdiagram.io** - Quick ER diagrams from code
@@ -314,10 +404,13 @@ After design, consider these tools:
 - **SchemaSpy** - Automated documentation
 - **tbls** - CI-friendly documentation generator
 
-### Testing
+### Testing & Data Generation
 - **DBUnit** - Database testing framework
 - **Testcontainers** - Docker-based testing
 - **pgTAP** - PostgreSQL unit testing
+- **Faker.js** - Generate fake data (JavaScript)
+- **Faker** - Generate fake data (Python)
+- **Mockaroo** - Online test data generator
 
 ---
 
@@ -330,6 +423,8 @@ After design, consider these tools:
 - I can iterate and refine based on feedback
 - Security recommendations should be reviewed by security professionals
 - Performance estimates are based on typical use cases
+- Generated dump data is for testing only - never use in production
+- Dump data respects all constraints and maintains referential integrity
 
 ---
 
