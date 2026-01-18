@@ -28,7 +28,7 @@ REQUIREMENT: [Natural language description of your data needs]
 OPTIONS (all optional):
 - Database: [PostgreSQL | MySQL | SQLite | SQL Server | Oracle] (default: PostgreSQL)
 - Normalization: [1NF | 2NF | 3NF | BCNF | Denormalized] (default: 3NF)
-- Include: [indexes | triggers | views | stored_procedures | sample_data | migrations | security]
+- Include: [indexes | triggers | views | stored_procedures | migrations | security]
 - Naming: [snake_case | camelCase | PascalCase] (default: snake_case)
 - Timestamps: [true | false] (default: true - adds created_at, updated_at)
 - Soft Delete: [true | false] (default: false - adds deleted_at column)
@@ -36,8 +36,8 @@ OPTIONS (all optional):
 - Output Format: [sql | prisma | typeorm | sqlalchemy | django_models | hibernate | spring_data_jpa | jooq] (default: sql)
 - Diagram: [mermaid | dbml | plantuml] (default: mermaid)
 - Multi-tenant: [true | false] (default: false - adds tenant_id isolation)
-- Dump Data: [true | false] (default: false - generates realistic INSERT statements)
-- Dump Size: [small | medium | large] (default: medium - 10/50/200 records per table)
+- Dump Data: [true | false] (default: false - generates realistic INSERT statements for testing)
+- Dump Size: [small | medium | large] (default: medium - 10/50/200 records per table; only used when Dump Data: true)
 ```
 
 ---
@@ -267,9 +267,11 @@ authors), categories, and reviews. Customers can leave reviews and ratings.
 OPTIONS:
 - Database: PostgreSQL
 - Normalization: 3NF
-- Include: indexes, sample_data
+- Include: indexes
 - Soft Delete: true
 - UUIDs: true
+- Dump Data: true
+- Dump Size: small
 ```
 
 ### Advanced Input with Data Dump
@@ -299,7 +301,7 @@ I will provide:
 4. ✅ Junction tables for M:N relationships (book_authors)
 5. ✅ Optimized indexes
 6. ✅ Data dictionary
-7. ✅ Sample INSERT statements (if Dump Data: true)
+7. ✅ Test data INSERT statements (if Dump Data: true)
 8. ✅ Migration scripts (if requested)
 9. ✅ Security recommendations (if requested)
 
